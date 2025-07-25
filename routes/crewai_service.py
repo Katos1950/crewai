@@ -3,10 +3,14 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from crewai import Agent, Crew, Task
 from dotenv import load_dotenv
+# from .story_state import story_state
+from openai import AsyncOpenAI
 
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 router = APIRouter()
+openai = AsyncOpenAI(api_key=api_key)
+model = "gpt-4o-mini"
 
 class SceneRequest(BaseModel):
     characters: list
@@ -67,5 +71,15 @@ async def generate_scene_with_crew(req: SceneRequest):
         verbose=True
     )
     result = crew.kickoff()
+    # story_state.add_chapter(result.raw)
 
-    return {"scene": result}
+    # Generate summary
+    prompt = f"Summarize the following scene:\n{result.raw}"
+    res = await openai.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}]
+    )
+    summary = res.choices[0].message.content
+    # story_state.add_memory(summary)
+
+    return {"scene": result, "summary": summary}

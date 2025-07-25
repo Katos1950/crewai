@@ -25,6 +25,9 @@ async def generate_characters(req: CharacterRequest):
     - Motivation
     - Flaw
     - Secrets
+    - Personality
+    - Skills
+    - Backstory
     - Relationships to other characters.
     It is not necessary that every character has a relationship with every other character.
     Return an array of character objects in this exact format:
@@ -36,6 +39,9 @@ async def generate_characters(req: CharacterRequest):
             "motivation": "...",
             "flaw": "...",
             "secret": "...",
+            "personality": "...",
+            "skills": "...",
+            "backstory": "...",
             "relationships": {{
                 "{{target1}}": "{{relationship description}}",
                 "{{target2}}": "{{relationship description}}",
@@ -53,15 +59,15 @@ async def generate_characters(req: CharacterRequest):
     return {"characters": json.loads(content)}
 
 
-class SummaryRequest(BaseModel):
-    story: str
+# class SummaryRequest(BaseModel):
+#     story: str
 
-@router.post("/summarizeStory")
-async def summarize_story(req: SummaryRequest):
-    prompt = f"Summarize the following story for memory context:\n\n{req.story}"
-    response = await openai.chat.completions.create(
-        model=model,
-        messages=[{"role": "user", "content": prompt}]
-    )
-    content = response.choices[0].message.content
-    return {"summary": content}
+# @router.post("/summarizeStory")
+# async def summarize_story(req: SummaryRequest):
+#     prompt = f"Summarize the following story for memory context:\n\n{req.story}"
+#     response = await openai.chat.completions.create(
+#         model=model,
+#         messages=[{"role": "user", "content": prompt}]
+#     )
+#     content = response.choices[0].message.content
+#     return {"summary": content}
